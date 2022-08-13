@@ -9,12 +9,15 @@ export const adviceSlice = createSlice({
     name: "advice",
     initialState,
     reducers: {
-        addAdvice: (state, action) => {
+        createAdvice: (state, action) => {
             state.push(action.payload)
+        },
+        modifyAdvice: () => {
+
         }
     }
 })
 
-export const { addAdvice } = adviceSlice.actions
+export const { createAdvice } = adviceSlice.actions
 
 export default adviceSlice.reducer

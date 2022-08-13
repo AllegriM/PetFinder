@@ -5,28 +5,19 @@ import { useForm } from "react-hook-form";
 import { IoLocationSharp, IoPaw } from 'react-icons/io5'
 import 'leaflet/dist/leaflet.css';
 import { fetchStreetQuery } from '../services/fetchStreetQuery';
-import { useDispatch } from 'react-redux';
-import { addAdvice } from '../features/adviceSlice';
 
 
-function SearchBar() {
-
-    const dispatch = useDispatch()
+function NewAdviceLocation( {setLocationOption} ) {
 
     const [searchText, setSearchText] = useState("")
     const [placeOptions, setPlaceOptions] = useState([])
-    // const [selectedOption, setSelectedOption] = useState()
 
-    const { register,
-        handleSubmit,
-        // formState: { errors } 
-    }
-        =
-        useForm({ place: "" });
+    const { register, handleSubmit } = useForm({ place: "" });
+        
     const onSubmit = data => setSearchText(data);
 
     useEffect(() => {
-        fetchStreetQuery(searchText.place).then(data => setPlaceOptions(data))
+        fetchStreetQuery(searchText.place).then(setPlaceOptions)
     }, [searchText])
 
     return (
@@ -37,14 +28,16 @@ function SearchBar() {
                 // value={selectedOption}
                 placeholder='¿Ubicación de la mascota perdida... ?'
                 type='text'
+                required
                 bg='white'
                 color='black'
                 pr={10}
             />
             {
                 placeOptions?.map(option => {
+                    console.log(option)
                     return(
-                        <Stack border='1px solid lightgray' key={option.place_id} onClick={() => dispatch(addAdvice({option}))} cursor='pointer'>
+                        <Stack key={option.place_id} onClick={() => setLocationOption({lat: option.lat, lon: option.lon, id: option.osm_id, name: option.display_name, address: option.address})} border='1px solid lightgray' cursor='pointer'>
                             <Text fontSize={14} display='flex' alignItems='center'><Icon as={IoLocationSharp} color='red' />{option.display_name}</Text>
                         </Stack>
                         )
@@ -56,4 +49,4 @@ function SearchBar() {
     )
 }
 
-export default SearchBar
+export default NewAdviceLocation

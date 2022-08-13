@@ -3,6 +3,7 @@ import './App.css'
 import { Routes, Route } from "react-router-dom";
 import ViewMode from './pages/ViewMode/ViewMode'
 import Home from './pages/Home/Home';
+import Posts from './pages/Posts/Posts';
 
 function App() {
 
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path='/' element={<ViewMode />} />
         <Route path='/home' element={<Home />} />
+        <Route path='/posts' element={<Posts />}/>
       </Routes>
       {/* <Footer /> */}
     </Stack>

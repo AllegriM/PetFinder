@@ -2,6 +2,13 @@ import { extendTheme } from '@chakra-ui/react'
 
 
 const theme = extendTheme({
+    components:{
+        Text: {
+            defaultProps:{
+                marginTop: "0em"
+            }
+        }
+    },
     color: {
         choco: {
             500: "#8B521C"  

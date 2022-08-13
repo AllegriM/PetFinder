@@ -1,11 +1,8 @@
 import { RangeSlider, RangeSliderFilledTrack, RangeSliderThumb, RangeSliderTrack, Stack, Text } from "@chakra-ui/react"
-import { useState } from "react"
 import { IoPaw } from 'react-icons/io5'
 
-function NewAdviceTime() {
+function NewAdviceTime( {setTime, time} ) {
 
-    const [time, setTime] = useState([0, 15])
-    console.log(time)
     return (
         <Stack maxW='400px' gap={3}>
             <Stack direction='row' align='center' justify='space-between'>
@@ -16,7 +13,7 @@ function NewAdviceTime() {
                 <RangeSliderTrack bg='red.100'>
                     <RangeSliderFilledTrack bg='brown' />
                 </RangeSliderTrack>
-                <RangeSliderThumb isDisabled='true' boxSize={6} index={0} />
+                <RangeSliderThumb boxSize={6} index={0} />
                 <RangeSliderThumb boxSize={6} index={1} />
             </RangeSlider>
         </Stack>
