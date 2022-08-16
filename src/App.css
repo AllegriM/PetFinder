@@ -2,3 +2,7 @@ body, #root {
   background-color: #f0e3d6;
   min-height: 100vh;
 }
+
+.swiper-wrapper{
+  width: 290px !important;
+}

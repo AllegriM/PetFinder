@@ -1,4 +1,4 @@
-import { Button, FormControl, FormLabel, Grid, Img, Input, Stack, Text } from "@chakra-ui/react";
+import { FormControl, FormLabel, Grid, Img, Input, Stack, Text } from "@chakra-ui/react";
 import { IoPaw } from 'react-icons/io5'
 import { AiOutlineInbox } from "react-icons/ai";
 import { useState } from "react";
@@ -12,6 +12,7 @@ function NewAdviceImage( {setUploadedImages, uploadedImages} ) {
 
     const handleUploadedFiles = files => {
         const uploaded = [...uploadedImages]
+        console.log(uploaded)
         let limitedExceeded = false
         files.some(file => {
             if( uploaded.findIndex(f => f.name === file.name) === -1 ){
@@ -29,6 +30,7 @@ function NewAdviceImage( {setUploadedImages, uploadedImages} ) {
 
     const fileSelectHandler = (e) => {
         const chosenFiles = Array.prototype.slice.call(e.target.files)
+        console.log(...chosenFiles)
         handleUploadedFiles(chosenFiles)
         // const reader = new FileReader()
         // console.log(URL.createObjectURL(file))
@@ -50,7 +52,7 @@ function NewAdviceImage( {setUploadedImages, uploadedImages} ) {
                     :
                     null
                 }
-                <FormLabel cursor='pointer' id="label-file-upload" htmlFor="input-file-upload" border='2px dashed #D3D3D3' borderRadius={5} p={4}>
+                <FormLabel opacity={!fileLimit ? "" : "0.4"} cursor='pointer' id="label-file-upload" htmlFor="input-file-upload" border='2px dashed #D3D3D3' borderRadius={5} p={4}>
                     <Stack align='center'>
                         <AiOutlineInbox size='1.75em' />
                         <Text fontWeight={700} textAlign='center'>Cargue imágenes aqui</Text>
@@ -58,14 +60,16 @@ function NewAdviceImage( {setUploadedImages, uploadedImages} ) {
                     </Stack> 
                 </FormLabel>
             </FormControl>
-            <Grid gridTemplateColumns='repeat(auto-fit, minmax(25px, 1fr))'>
+            <Grid gridTemplateColumns='repeat(auto-fit, minmax(50px, 50px))' gap='34px'>
                 {
                     uploadedImages.map((file, i) => {
                         console.log(file)
                         return(
                             <Stack key={i} pos='relative'>
-                                <Button p='0' right='25px' top='5px' pos='absolute' h='10px' w='25px' maxW='25px' borderRadius='50%' onClick={deleteImg}><MdCancel color="red" /></Button>
-                                <Img cursor='pointer' objectFit='cover' w='50px' h='50px'  src={URL.createObjectURL(file)} />
+                                <Stack bg='white' borderRadius='50%' pos='absolute' right='-10px' cursor='pointer' onClick={deleteImg} w='20px'>
+                                    <MdCancel size='1.25em' color="red" />
+                                </Stack>
+                                <Img border='1px solid rgb(211,211,211, 0.4)' objectFit='contain' w='50px' h='50px'  src={URL.createObjectURL(file)} />
                             </Stack>
                         )
                     })

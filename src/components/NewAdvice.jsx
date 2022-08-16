@@ -14,11 +14,13 @@ function NewAdvice({ isOpen, onClose }) {
 
     const [time, setTime] = useState([0, 15])
     const [description, setDescription] = useState("")
-    const [locationOption, setLocationOption] = useState({})
+    const [locationOption, setLocationOption] = useState([])
     const [uploadedImages, setUploadedImages] = useState([])
     const [value, setValue] = useState("dog")
 
+    console.log(locationOption)
     const createNewAdvice = () => {
+        if(Object.keys(locationOption).length === 0) return
         dispatch(createAdvice({location: locationOption, uploadedImages, description, time: time[1], typeOfPet: value}))
     }
 

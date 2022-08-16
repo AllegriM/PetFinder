@@ -10,7 +10,7 @@ function NewAdviceDescription( {setDescription} ) {
     return (
         <Stack m='2em 0'>
             <Text fontWeight='600' display='flex' alignItems='center' gap={1}><IoPaw/>Descripción</Text>
-            <Textarea onChange={writeDescription} maxW='400px' h='120px' resize='none' placeholder="Descripción de la mascota encontrada..." />
+            <Textarea required onChange={writeDescription} maxW='400px' h='120px' resize='none' placeholder="Descripción de la mascota encontrada..." />
         </Stack>
     )
 }
