@@ -1,7 +1,7 @@
 
 export const fetchStreetQuery = async( searchQuery ) => {
     if(searchQuery === undefined) return
-    const NOMINATIM_URL = `https://nominatim.openstreetmap.org/?addressdetails=1&q=${searchQuery}&format=json&limit=5`
+    const NOMINATIM_URL = `https://nominatim.openstreetmap.org/?addressdetails=1&q=${searchQuery}&format=json&limit=5&countrycodes=ar`
     try {
         const request = await fetch(NOMINATIM_URL)
         const data = await request.json()
