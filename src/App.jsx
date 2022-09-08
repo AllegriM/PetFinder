@@ -20,7 +20,7 @@ function App() {
             <Route path='/home' element={<Home />} exact />
             <Route path='/posts' element={<Posts />} exact />
           </Route>
-          <Route path='/login' element={<Login />} />
+          <Route path='/' element={<Login />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </AuthContextProvider>

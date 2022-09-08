@@ -10,9 +10,34 @@ import {
     Heading,
     Text,
 } from '@chakra-ui/react';
+import { useState } from 'react';
 import GoogleIcon from '../../components/Icons/GoogleIcon'
+import { useAuth } from '../../context/authContext';
 
 const LoginForm = ({ setLoginView }) => {
+
+    const { loginWithGoogle, singIn } = useAuth()
+
+    const [user, setUser] = useState({
+        email: '',
+        password: '',
+        formErrors: { email: '', password: '' },
+        emailValid: false,
+        passwordValid: false,
+    })
+
+    const handleChangeUser = (e) => {
+        const { name, value } = e.target
+        setUser({
+            ...user,
+            [name]: value
+        })
+    }
+
+    const handleSubmitUser = (e) => {
+        e.preventDefault();
+        singIn(user.email, user.password)
+    }
 
     return (
         <Flex
@@ -34,13 +59,13 @@ const LoginForm = ({ setLoginView }) => {
                     boxShadow={'lg'}
                     p={8}>
                     <Stack spacing={4}>
-                        <FormControl id="email">
+                        <FormControl id="email" isRequired>
                             <FormLabel>Correo electronico</FormLabel>
-                            <Input type="email" />
+                            <Input onChange={(e) => handleChangeUser(e)} type="email" />
                         </FormControl>
-                        <FormControl id="password">
+                        <FormControl id="password" isRequired>
                             <FormLabel>Contraseña</FormLabel>
-                            <Input type="password" />
+                            <Input onChange={(e) => handleChangeUser(e)} type="password" />
                         </FormControl>
                         <Stack spacing={10}>
                             <Stack
@@ -50,17 +75,18 @@ const LoginForm = ({ setLoginView }) => {
                                 <Link color={'blue.400'}>Olvidaste tu contraseña?</Link>
                             </Stack>
                             <Button
+                                onClick={handleSubmitUser}
                                 colorScheme={'blue'}
                             >
                                 Ingresa
                             </Button>
                         </Stack>
-                        <Button colorScheme={'gray'}>
+                        <Button onClick={loginWithGoogle} colorScheme={'gray'}>
                             <GoogleIcon size='1.5em' />
                         </Button>
                         <Stack pt={6}>
                             <Text align={'center'}>
-                                No tienes cuenta? <Link color={'blue.400'} onClick={() => setLoginView(false)} >Ingresa</Link>
+                                No tienes cuenta? <Link color={'blue.400'} onClick={() => setLoginView(false)} >Registrate</Link>
                             </Text>
                         </Stack>
                     </Stack>
