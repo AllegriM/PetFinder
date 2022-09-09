@@ -1,6 +1,6 @@
 import { useContext, useState } from "react"
 import { createContext } from "react"
-import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -17,7 +17,7 @@ const AuthContextProvider = ({ children }) => {
     const navigate = useNavigate()
 
     const [currentUser, setCurrentUser] = useState(null)
-    const [isLoading, setIsLoading] = useState(true)
+    const [pending, setPending] = useState(true)
     const [registerError, setRegisterError] = useState("")
 
     //=== Create user with email and password ===//
@@ -28,25 +28,25 @@ const AuthContextProvider = ({ children }) => {
                 // Signed in
                 const user = userCredential.user;
                 console.log(user)
-                navigate("/view")
+                navigate("/")
             })
             .catch((error) => {
                 const errorCode = error.code;
-                if (errorCode === 'auth/email-already-exists') setRegisterError('El correo ya existe')
-                if (errorCode === 'auth/invalid-email') setRegisterError('El correo no es valido')
-                if (errorCode === 'auth/invalid-password') setRegisterError('La contraseña no es valida')
+                console.log(errorCode)
+                if (errorCode === "auth/email-already-in-use") setRegisterError("El correo ya esta en uso.")
+                if (errorCode === 'auth/email-already-exists') setRegisterError('El correo ya existe.')
+                if (errorCode === 'auth/invalid-email') setRegisterError('El correo no es valido.')
+                if (errorCode === 'auth/invalid-password') setRegisterError('La contraseña no es valida.')
             });
     }
 
     const signIn = async (email, password) => {
-        signInWithEmailAndPassword(auth, email, password)
+        await signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user;
                 console.log(user)
-                navigate("/view")
-
-                // ...
+                navigate("/")
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -88,6 +88,7 @@ const AuthContextProvider = ({ children }) => {
 
     const logOut = () => {
         signOut(auth).then(() => {
+            setCurrentUser(null)
             // Sign-out successful.
         }).catch((error) => {
             // An error happened.
@@ -96,21 +97,18 @@ const AuthContextProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        auth.onAuthStateChanged(user => {
-            console.log(user)
-            if (user) {
-                setCurrentUser(user)
-                setIsLoading(false)
-            } else {
-                setCurrentUser(null)
-                setIsLoading(true)
-            }
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setCurrentUser(user)
+            setPending(false)
         })
+        return () => {
+            unsubscribe()
+        }
     }, [])
 
     return (
         <authContext.Provider value={{
-            isLoading,
+            pending,
             currentUser,
             registerError,
             signIn,

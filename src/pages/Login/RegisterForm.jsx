@@ -23,7 +23,7 @@ import FormErrors from '../../components/FormErrors';
 
 export default function RegisterForm({ setLoginView }) {
 
-    const { signUp } = useAuth();
+    const { signUp, registerError } = useAuth();
 
     const [newUser, setNewUser] = useState({
         name: '',
@@ -53,7 +53,7 @@ export default function RegisterForm({ setLoginView }) {
         })
     }
 
-    const handleSubmitNewUser = (e) => {
+    const handleSubmitNewUser = async (e) => {
         e.preventDefault();
         useValidateForm({ newUser, setNewUser })
         if (newUser.name.match(NAME_REGEX) && newUser.lastName.match(NAME_REGEX) && newUser.email.match(EMAIL_REGEX) && newUser.password.match(PASSWORD_REGEX)) {
@@ -83,7 +83,7 @@ export default function RegisterForm({ setLoginView }) {
                     p={8}
                 >
                     <Stack spacing={4} pt={3} position={'relative'}>
-                        <FormErrors formErrors={newUser.formErrors} />
+                        <FormErrors DBerrors={registerError} formErrors={newUser.formErrors} />
                         <HStack>
                             <Box>
                                 <FormControl id="name" isRequired>
@@ -91,7 +91,6 @@ export default function RegisterForm({ setLoginView }) {
                                     <Input
                                         onChange={(e) => handleChangeNewUser(e)}
                                         isRequired
-                                        pattern='[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]'
                                         title='Maximo 20 caracteres y no puede contener numeros'
                                         placeholder='Nombre'
                                         name='name'
@@ -105,7 +104,6 @@ export default function RegisterForm({ setLoginView }) {
                                     <Input
                                         onChange={(e) => handleChangeNewUser(e)}
                                         isRequired
-                                        pattern='[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]'
                                         title='Maximo 20 caracteres y no puede contener numeros'
                                         placeholder='Apellido'
                                         name='lastName'
@@ -119,7 +117,6 @@ export default function RegisterForm({ setLoginView }) {
                             <Input
                                 onChange={(e) => handleChangeNewUser(e)}
                                 isRequired
-                                pattern='[\w-\.]+@([\w-]+\.)+[\w-]{2,4}'
                                 title='Correo electronico invalido, intente con otro'
                                 placeholder='Correo electronico'
                                 name='email'
@@ -132,7 +129,6 @@ export default function RegisterForm({ setLoginView }) {
                                 <Input
                                     onChange={(e) => handleChangeNewUser(e)}
                                     isRequired
-                                    pattern='(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}'
                                     title='Minimo 8 caracteres, al menos una letra mayuscula, una minuscula y un numero'
                                     placeholder='Contraseña'
                                     name='password'

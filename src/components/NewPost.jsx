@@ -18,10 +18,10 @@ function NewPost({ isOpen, onClose }) {
     const [uploadedImages, setUploadedImages] = useState([])
     const [value, setValue] = useState("dog")
 
-    const createNewPost = async() => {
+    const createNewPost = async () => {
         if (description.length === 0) return
-        if(Object.keys(locationOption).length === 0) return
-        dispatch(createPost({location: locationOption, uploadedImages, description, time: time[1], typeOfPet: value}))
+        if (Object.keys(locationOption).length === 0) return
+        dispatch(createPost({ location: locationOption, uploadedImages, description, time: time[1], typeOfPet: value }))
         onClose()
     }
 

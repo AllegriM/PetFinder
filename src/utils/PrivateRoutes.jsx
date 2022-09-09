@@ -3,10 +3,10 @@ import { useAuth } from "../context/authContext"
 
 const PrivateRoutes = () => {
 
-    const { currentUser, isLoading } = useAuth()
-    console.log(currentUser)
+    const { currentUser } = useAuth()
+
     return (
-        currentUser && !isLoading ? <Outlet /> : <Navigate to="/" />
+        currentUser ? <Outlet /> : <Navigate to="/login" />
     )
 }
 
