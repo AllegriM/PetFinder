@@ -17,32 +17,9 @@ import { useState } from 'react';
 import NoViewIcon from '../../components/Icons/NoViewIcon';
 import ViewIcon from '../../components/Icons/ViewIcon';
 import { useAuth } from '../../context/authContext';
-
-const NAME_REGEX = /^[a-zA-Z]{3,}$/;
-// eslint-disable-next-line no-useless-escape
-const EMAIL_REGEX = /^[\w-\.] +@([\w -] +\.) +[\w-]{2,4}$/g;
-const PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
-
 import React from 'react'
-
-function FormErrors({ formErrors }) {
-
-    return (
-        Object.keys(formErrors).map((fieldName, i) => {
-            if (formErrors[fieldName].length > 0) {
-                return (
-                    <Stack key={i} spacing={0}>
-                        <Text fontSize={'sm'} color={'red.500'} px={'2'}>{formErrors[fieldName]}</Text>
-                    </Stack>
-                )
-            } else {
-                return ''
-            }
-        })
-    )
-}
-
-// export default FormErrors
+import useValidateForm, { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '../../hooks/useValidateForm';
+import FormErrors from '../../components/FormErrors';
 
 export default function RegisterForm({ setLoginView }) {
 
@@ -53,7 +30,8 @@ export default function RegisterForm({ setLoginView }) {
         lastName: '',
         email: '',
         password: '',
-        formErrors: { name: '', lastName: '', email: '', password: '' },
+        formErrors: { name: '', lastName: '', email: '', password: '', general: '' },
+        generalValid: false,
         nameValid: false,
         lastNameValid: false,
         emailValid: false,
@@ -62,54 +40,24 @@ export default function RegisterForm({ setLoginView }) {
 
     const [showPassword, setShowPassword] = useState(false);
 
+    const newObj = Object.keys(newUser.formErrors).reduce((accumulator, key) => {
+        return { ...accumulator, [key]: '' };
+    }, {});
+
     const handleChangeNewUser = (e) => {
         const { name, value } = e.target;
         setNewUser({
             ...newUser,
+            formErrors: newObj,
             [name]: value
         })
-        validateField(name, value)
-    }
-
-    const validateField = (fieldName, value) => {
-        let fieldValidationErrors = newUser.formErrors;
-        let nameValid = newUser.nameValid;
-        let lastNameValid = newUser.lastNameValid;
-        let emailValid = newUser.emailValid;
-        let passwordValid = newUser.passwordValid;
-
-        switch (fieldName) {
-            case 'name':
-                nameValid = value.match(NAME_REGEX) || value === "";
-                fieldValidationErrors.name = nameValid ? '' : 'Ingrese un nombre válido';
-                break;
-            case 'lastName':
-                lastNameValid = value.match(NAME_REGEX) || value === "";
-                fieldValidationErrors.lastName = lastNameValid ? '' : 'Ingrese un apellido válido';
-                break;
-            case 'email':
-                emailValid = value.match(EMAIL_REGEX) || value === "";
-                fieldValidationErrors.email = emailValid ? '' : 'Correo electronico inválido';
-                break;
-            case 'password':
-                passwordValid = value.match(PASSWORD_REGEX) || value === "";
-                fieldValidationErrors.password = passwordValid ? '' : 'Contraseña inválida';
-                break;
-            default:
-                break;
-        }
-        setNewUser({
-            ...newUser,
-            formErrors: fieldValidationErrors,
-            emailValid: emailValid,
-            passwordValid: passwordValid
-        });
     }
 
     const handleSubmitNewUser = (e) => {
         e.preventDefault();
+        useValidateForm({ newUser, setNewUser })
         if (newUser.name.match(NAME_REGEX) && newUser.lastName.match(NAME_REGEX) && newUser.email.match(EMAIL_REGEX) && newUser.password.match(PASSWORD_REGEX)) {
-            signUp(newUser.name, newUser.lastName, newUser.email, newUser.password)
+            signUp(newUser.email, newUser.password, newUser.name, newUser.lastName)
         }
     }
 

@@ -2,6 +2,8 @@ import { useContext, useState } from "react"
 import { createContext } from "react"
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../firebase/firebase";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export const authContext = createContext()
 
@@ -12,7 +14,10 @@ export const useAuth = () => {
 
 const AuthContextProvider = ({ children }) => {
 
-    // const [user, setUser] = useState(null)
+    const navigate = useNavigate()
+
+    const [currentUser, setCurrentUser] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
     const [registerError, setRegisterError] = useState("")
 
     //=== Create user with email and password ===//
@@ -23,14 +28,13 @@ const AuthContextProvider = ({ children }) => {
                 // Signed in
                 const user = userCredential.user;
                 console.log(user)
+                navigate("/view")
             })
             .catch((error) => {
                 const errorCode = error.code;
                 if (errorCode === 'auth/email-already-exists') setRegisterError('El correo ya existe')
                 if (errorCode === 'auth/invalid-email') setRegisterError('El correo no es valido')
                 if (errorCode === 'auth/invalid-password') setRegisterError('La contraseña no es valida')
-                const errorMessage = error.message;
-                console.log(errorMessage)
             });
     }
 
@@ -40,13 +44,15 @@ const AuthContextProvider = ({ children }) => {
                 // Signed in
                 const user = userCredential.user;
                 console.log(user)
+                navigate("/view")
+
                 // ...
             })
             .catch((error) => {
                 const errorCode = error.code;
-                console.log(errorCode)
-                const errorMessage = error.message;
-                console.log(errorMessage)
+                console.log(error.code)
+                if (errorCode === 'auth/user-not-found') setRegisterError('El usuario no existe')
+                if (errorCode === 'auth/wrong-password') setRegisterError('La contraseña es incorrecta')
             });
     }
 
@@ -89,8 +95,23 @@ const AuthContextProvider = ({ children }) => {
         });
     }
 
+    useEffect(() => {
+        auth.onAuthStateChanged(user => {
+            console.log(user)
+            if (user) {
+                setCurrentUser(user)
+                setIsLoading(false)
+            } else {
+                setCurrentUser(null)
+                setIsLoading(true)
+            }
+        })
+    }, [])
+
     return (
         <authContext.Provider value={{
+            isLoading,
+            currentUser,
             registerError,
             signIn,
             signUp,

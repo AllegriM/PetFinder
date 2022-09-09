@@ -11,32 +11,47 @@ import {
     Text,
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import FormErrors from '../../components/FormErrors';
 import GoogleIcon from '../../components/Icons/GoogleIcon'
 import { useAuth } from '../../context/authContext';
+import useValidateForm, { EMAIL_REGEX, PASSWORD_REGEX } from '../../hooks/useValidateForm';
 
 const LoginForm = ({ setLoginView }) => {
 
-    const { loginWithGoogle, singIn } = useAuth()
+    const { loginWithGoogle, signIn, registerError } = useAuth()
 
     const [user, setUser] = useState({
+        name: '',
+        lastName: '',
         email: '',
         password: '',
-        formErrors: { email: '', password: '' },
+        formErrors: { name: '', lastName: '', email: '', password: '', general: '' },
+        generalValid: false,
+        nameValid: false,
+        lastNameValid: false,
         emailValid: false,
         passwordValid: false,
     })
+
+    const newObj = Object.keys(user.formErrors).reduce((accumulator, key) => {
+        return { ...accumulator, [key]: '' };
+    }, {});
 
     const handleChangeUser = (e) => {
         const { name, value } = e.target
         setUser({
             ...user,
+            formErrors: newObj,
             [name]: value
         })
     }
 
     const handleSubmitUser = (e) => {
         e.preventDefault();
-        singIn(user.email, user.password)
+        useValidateForm({ newUser: user, setNewUser: setUser, formType: 'logIn' })
+        if (user.email.match(EMAIL_REGEX) && user.password.match(PASSWORD_REGEX)) {
+            signIn(user.email, user.password)
+        }
     }
 
     return (
@@ -59,13 +74,14 @@ const LoginForm = ({ setLoginView }) => {
                     boxShadow={'lg'}
                     p={8}>
                     <Stack spacing={4}>
+                        <FormErrors formErrors={user.formErrors} DBerrors={registerError} />
                         <FormControl id="email" isRequired>
-                            <FormLabel>Correo electronico</FormLabel>
-                            <Input onChange={(e) => handleChangeUser(e)} type="email" />
+                            <FormLabel htmlFor='email'>Correo electronico</FormLabel>
+                            <Input onChange={(e) => handleChangeUser(e)} name='email' type="email" />
                         </FormControl>
                         <FormControl id="password" isRequired>
-                            <FormLabel>Contraseña</FormLabel>
-                            <Input onChange={(e) => handleChangeUser(e)} type="password" />
+                            <FormLabel htmlFor='password'>Contraseña</FormLabel>
+                            <Input onChange={(e) => handleChangeUser(e)} name='password' type="password" />
                         </FormControl>
                         <Stack spacing={10}>
                             <Stack
